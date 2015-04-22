@@ -17,23 +17,27 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.WindowsDirectory;
 import org.apache.lucene.util.Version;
 
 
 import java.util.*;
 import java.io.*;
+import java.nio.*;
 
 public class Lucene {
   private static String doc_title;
   private static String doc_id;
-  private static String path = "E:\\IdeaProjects\\WebCrawler\\document";
+  private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
 
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.
     //    The same analyzer should be used for indexing and searching
     StandardAnalyzer analyzer = new StandardAnalyzer();
 
+    
     // 1. create the index
+	//Path path = FileSystems.getDefault().getPath("logs", "access.log");
     Directory index = new RAMDirectory();
 
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -52,7 +56,7 @@ public class Lucene {
     w.close();
 
     // 2. query
-    String querystr = args.length > 0 ? args[0] : "Help";
+    String querystr = args.length > 0 ? args[0] : "the";
 
     // the "title" arg specifies the default field to use
     // when no field is explicitly specified in the query.

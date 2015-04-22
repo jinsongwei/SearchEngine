@@ -12,27 +12,61 @@ import java.util.*;
  * Example program to list links from a URL.
  */
 public class Main {
-    private static String path = "E:\\IdeaProjects\\WebCrawler\\document\\";
-    private static int docNum = 0;
+    private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
+    private static  long docNum = 1;
+	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
+	private static final double CONVERT = 1024*1024*1024;
+    private static final double LIMIT = 5;
 
+    public static void setDocNum(int docNumber){
+        docNum = docNumber;
+    }
+    public static long getDocNum(){
+        docNum++;
+        return docNum - 1;
+    }
+    public static Hashtable<String,String> getDuplicateUrlChecker(){
+        return duplicateUrlChecker;
+    }
+
+    //----------------->>>>>>>>>>>   main  <<<<<<<<<<<---------------------------
     public static void main(String[] args) throws IOException, InterruptedException {
        webCrawlerDemo();
 
     }
     public static void webCrawlerDemo() throws IOException, InterruptedException {
-        String fileName = path + "doc.txt";
+        String fileName = path + "0.txt";
         String hostUrl = "http://en.wikipedia.org";
 
         create_file(fileName);
        // start("http://www.ucr.edu",fileName);
-        Vector<String> links;
+        Queue<String> q = new LinkedList<>() ;
 
-        Queue<String> q = new LinkedList<>();
-        q.add(hostUrl);
-        int count = 0;
+  //      Queue<String> q = new LinkedList<>();
+  //      q.add(hostUrl);
 
         PrintWriter writer = new PrintWriter(fileName);
-        writer.println(hostUrl);
+
+        Document doc = Jsoup.connect(hostUrl).get();
+        Elements links = doc.select("a[href]");
+        String text = doc.body().text();
+        String title = doc.title();
+
+        writer.println(title + "\n");
+        writer.println(text);
+        writer.close();
+
+        for(Element link: links){
+            q.add(link.attr("abs:href"));
+        }
+
+        while(!q.isEmpty()){
+            String url = q.remove();
+            MyThreads t = new MyThreads(url);
+            t.run();
+        }
+        //writer.println(hostUrl);
+        /*
         while (!q.isEmpty() && count < 1) {
              String url = q.remove();
            //  int docName = count;
@@ -49,6 +83,7 @@ public class Main {
              count++;
         }
         writer.close();
+        */
     }
     public static void create_file(String doc)throws IOException{
         File f = new File(doc);
@@ -58,7 +93,7 @@ public class Main {
     /* param: the url
         return: a vector contain all links in this url
      */
-    public static Vector<String> passUrl(String url)throws IOException{
+/*    public static Vector<String> passUrl(String url)throws IOException{
         Vector<String> v = new Vector<String>();
 
 
@@ -85,7 +120,7 @@ public class Main {
         }
         return v;
     }
-
+*/
     public static void start(String urlTemp,String fileN)throws IOException{
         //Validate.isTrue(args.length == 1, "usage: supply url to fetch");
         String url = urlTemp;
@@ -101,7 +136,6 @@ public class Main {
         Elements imports = doc.select("link[href]");
 
         String text = doc.body().text();
-
         print("\nMedia: (%d)", media.size());
         for (Element src : media) {
             if (src.tagName().equals("img"))
