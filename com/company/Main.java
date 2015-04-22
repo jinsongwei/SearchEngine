@@ -15,9 +15,18 @@ public class Main {
     private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
     private static  long docNum = 1;
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
-	private static final double CONVERT = 1024*1024*1024;
-    private static final double LIMIT = 5;
+	private static final double CONVERT = 1024*1024;
+    private static final long LIMIT = 50*1024*1024;
+    private static int stop = 0;
+    private static long dataSize = 0;
 
+    public static long getDataSize(){
+        return dataSize;
+    }
+
+    public static void addData(long data){
+        dataSize += data;
+    }
     public static void setDocNum(int docNumber){
         docNum = docNumber;
     }
@@ -28,6 +37,8 @@ public class Main {
     public static Hashtable<String,String> getDuplicateUrlChecker(){
         return duplicateUrlChecker;
     }
+
+    public static int isStop(){return stop;}
 
     //----------------->>>>>>>>>>>   main  <<<<<<<<<<<---------------------------
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -65,31 +76,36 @@ public class Main {
                 q.add(url);
             }
         }
-
+        int name = 0;
         while(!q.isEmpty()){
             String url = q.remove();
-            MyThreads t = new MyThreads(url);
-            t.run();
+            MyThreads t = new MyThreads(url,name);
+            t.start();
+            name++;
         }
-        //writer.println(hostUrl);
         /*
-        while (!q.isEmpty() && count < 1) {
-             String url = q.remove();
-           //  int docName = count;
-           //  String file = path + Integer.toString(docName) + ".txt";
-            links = passUrl(url);
-             if (!links.isEmpty()) {
-                 for (String link : links) {
-                     q.add(link);
-        //             System.out.println(link);
-                     writer.println(link);
-                     }
-                 writer.println();
-                 }
-             count++;
+        while(true){
+            checkSize();
+            System.out.println("data size : " + dataSize);
+            Thread.sleep(5000);
         }
-        writer.close();
         */
+
+    }
+    public static void checkSize(){
+       // File file = new File(path);
+      //  dataSize = file.length()/CONVERT;
+        System.out.println("\t\tData Size is: " + dataSize);
+        if(dataSize > LIMIT) {
+            /*
+            for(Thread t: Thread.getAllStackTraces().keySet()){
+                if(t.getState() == Thread.State.RUNNABLE)
+                    t.interrupt();
+                //t.stop();
+            }
+            */
+            System.exit(0);
+        }
     }
     public static void create_file(String doc)throws IOException{
         File f = new File(doc);

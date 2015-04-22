@@ -15,20 +15,21 @@ import static com.company.Main.create_file;
  * Created by Jin on 4/9/2015.
  */
 public class MyThreads implements Runnable{
+    private Thread t;
 	private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
     private static Queue<String> q = new LinkedList<>();
-	private static final double CONVERT = 1024*1024*1024;
-    private static final double LIMIT = 5;
-	
+
  //   private static String docNum;
+    private static int name;
     private String hostUrl;
  //   private String text;
  //   private String title;
 
-    public MyThreads(String url){
+    public MyThreads(String url, int name){
        // this.docNum = docNum;
         this.hostUrl = url;
+        this.name = name;
     //    this.title = title;
     }
 
@@ -38,27 +39,19 @@ public class MyThreads implements Runnable{
         q.add(hostUrl);
         int count = 0;
 //        PrintWriter writer = new PrintWriter(fileName);
-        while(!q.isEmpty() && count < 1 ){
+   //     double dataTotal = Main.getDataSize();
+        while(!q.isEmpty() && count < 10){
             String url = q.remove();
+            System.out.println(count);
+            Main.checkSize();
             try {
                 passUrl(url);
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                System.out.println("Thread " + name + "interrupted");
+            }
             count++;
         }
 
-        /*
-        try {
-
-            PrintWriter writer = new PrintWriter(docNum);
-            writer.println(title + "\n");
-            writer.println(text);
-            writer.close();
-           // Main.getDuplicateUrlChecker();
-        }
-        catch (FileNotFoundException e){
-            System.out.println("open file fail");
-        }
-        */
     }
 	 public static void create_file(String doc)throws IOException{
         File f = new File(doc);
@@ -74,7 +67,7 @@ public class MyThreads implements Runnable{
         String title = doc.title();
         long docNumber = Main.getDocNum();
 
-        System.out.println(docNumber);
+        System.out.println("Thread " + name + ", " + docNumber);
 
         String file = path + Long.toString(docNumber) + ".txt";
 
@@ -84,6 +77,8 @@ public class MyThreads implements Runnable{
         writer.println(text);
         writer.close();
 
+        File thisFile = new File(file);
+        Main.addData(thisFile.length());
 
         for(Element link : links){
             String url_inQueue = link.attr("abs:href");
@@ -91,6 +86,13 @@ public class MyThreads implements Runnable{
                 Main.getDuplicateUrlChecker().put(url_inQueue,"OK");
                 q.add(url_inQueue);
             }
+        }
+    }
+    public void start(){
+        System.out.println("Starting" + name);
+        if(t == null){
+            t = new Thread(this);
+            t.start();
         }
     }
     
