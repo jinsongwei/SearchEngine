@@ -87,7 +87,10 @@ public class MyThreads implements Runnable{
 
         for(Element link : links){
             String url_inQueue = link.attr("abs:href");
-            q.add(url_inQueue);
+            if(!Main.getDuplicateUrlChecker().containsKey(url_inQueue)) {
+                Main.getDuplicateUrlChecker().put(url_inQueue,"OK");
+                q.add(url_inQueue);
+            }
         }
     }
     

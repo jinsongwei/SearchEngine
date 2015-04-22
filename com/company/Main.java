@@ -45,6 +45,8 @@ public class Main {
   //      Queue<String> q = new LinkedList<>();
   //      q.add(hostUrl);
 
+        duplicateUrlChecker.put(hostUrl,"ok");
+
         PrintWriter writer = new PrintWriter(fileName);
 
         Document doc = Jsoup.connect(hostUrl).get();
@@ -57,7 +59,11 @@ public class Main {
         writer.close();
 
         for(Element link: links){
-            q.add(link.attr("abs:href"));
+            String url = link.attr("abs:href");
+            if(!duplicateUrlChecker.containsKey(url)) {
+                duplicateUrlChecker.put(url,"ok");
+                q.add(url);
+            }
         }
 
         while(!q.isEmpty()){
