@@ -47,7 +47,8 @@ public class Main {
     }
     public static void webCrawlerDemo() throws IOException, InterruptedException {
         String fileName = path + "0.txt";
-        String hostUrl = "http://en.wikipedia.org";
+        //String hostUrl = "http://en.wikipedia.org";
+        String hostUrl = "http://www.ucr.edu";
 
         create_file(fileName);
        // start("http://www.ucr.edu",fileName);
@@ -77,11 +78,13 @@ public class Main {
             }
         }
         int name = 0;
-        while(!q.isEmpty()){
+        int count = 0;
+        while(!q.isEmpty() && count < 5){
             String url = q.remove();
             MyThreads t = new MyThreads(url,name);
-            t.start();
+            new Thread(t).start();
             name++;
+          //  count++;
         }
         /*
         while(true){
@@ -95,7 +98,7 @@ public class Main {
     public static void checkSize(){
        // File file = new File(path);
       //  dataSize = file.length()/CONVERT;
-        System.out.println("\t\tData Size is: " + dataSize);
+     //   System.out.println("\t\tData Size is: " + dataSize);
         if(dataSize > LIMIT) {
             /*
             for(Thread t: Thread.getAllStackTraces().keySet()){

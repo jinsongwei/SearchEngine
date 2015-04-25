@@ -15,7 +15,7 @@ import static com.company.Main.create_file;
  * Created by Jin on 4/9/2015.
  */
 public class MyThreads implements Runnable{
-    private Thread t;
+    //private Thread t;
 	private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
     private static Queue<String> q = new LinkedList<>();
@@ -36,13 +36,17 @@ public class MyThreads implements Runnable{
     public void run(){
       //  Vector<String> links;
 
-        q.add(hostUrl);
+        try {
+                passUrl(hostUrl);
+            } catch (IOException e) {
+                System.out.println("Thread " + name + "interrupted");
+            }
         int count = 0;
 //        PrintWriter writer = new PrintWriter(fileName);
    //     double dataTotal = Main.getDataSize();
-        while(!q.isEmpty() && count < 10){
+        while(!q.isEmpty() && count < 100 ){
             String url = q.remove();
-            System.out.println(count);
+       //     System.out.println(count);
             Main.checkSize();
             try {
                 passUrl(url);
@@ -88,13 +92,15 @@ public class MyThreads implements Runnable{
             }
         }
     }
+    /*
     public void start(){
         System.out.println("Starting" + name);
         if(t == null){
             t = new Thread(this);
-            t.start();
+            t.run();
         }
     }
+    */
     
 
 }
