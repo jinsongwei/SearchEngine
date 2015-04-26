@@ -33,8 +33,8 @@ import java.nio.file.Path;
 public class Lucene {
   private static String doc_title;
   private static String doc_id;
-  private static String pathdir = "E:\\IdeaProjects\\WebCrawler\\document\\";
-  private static Path path = FileSystems.getDefault().getPath("E:\\IdeaProjects\\WebCrawler\\indexs\\");
+  private static String pathdir = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
+  private static Path path = FileSystems.getDefault().getPath("C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\indexs\\");
 
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.

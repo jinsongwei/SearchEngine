@@ -16,7 +16,7 @@ import static com.company.Main.create_file;
  */
 public class MyThreads implements Runnable{
     //private Thread t;
-	private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
+	private static String path = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
     private static Queue<String> q = new LinkedList<>();
 
@@ -39,23 +39,21 @@ public class MyThreads implements Runnable{
         try {
                 passUrl(hostUrl);
             } catch (IOException e) {
-                System.out.println("Thread " + name + "interrupted");
+                System.out.println("Thread " + Thread.currentThread().getName() + "interrupted");
             }
         int count = 0;
 //        PrintWriter writer = new PrintWriter(fileName);
    //     double dataTotal = Main.getDataSize();
-        while(!q.isEmpty() && count < 100 ){
+        while(!q.isEmpty() ) {
             String url = q.remove();
-       //     System.out.println(count);
+            //     System.out.println(count);
             Main.checkSize();
             try {
                 passUrl(url);
             } catch (IOException e) {
-                System.out.println("Thread " + name + "interrupted");
+                System.out.println("Thread " + Thread.currentThread().getName() + "interruped");
             }
-            count++;
         }
-
     }
 	 public static void create_file(String doc)throws IOException{
         File f = new File(doc);
@@ -71,7 +69,7 @@ public class MyThreads implements Runnable{
         String title = doc.title();
         long docNumber = Main.getDocNum();
 
-        System.out.println("Thread " + name + ", " + docNumber);
+        System.out.println("Thread " + Thread.currentThread().getName() + ", " + docNumber);
 
         String file = path + Long.toString(docNumber) + ".txt";
 

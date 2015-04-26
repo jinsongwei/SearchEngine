@@ -12,7 +12,7 @@ import java.util.*;
  * Example program to list links from a URL.
  */
 public class Main {
-    private static String path = "E:\\IdeaProjects\\WebCrawler\\documents\\";
+    private static String path = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
     private static  long docNum = 1;
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
 	private static final double CONVERT = 1024*1024;
@@ -77,12 +77,17 @@ public class Main {
                 q.add(url);
             }
         }
+        Thread main_thread = Thread.currentThread();
+        main_thread.setPriority(10);
+
         int name = 0;
         int count = 0;
-        while(!q.isEmpty() && count < 5){
+        while(!q.isEmpty()){
             String url = q.remove();
             MyThreads t = new MyThreads(url,name);
-            new Thread(t).start();
+            Thread thr = new Thread(t);
+            thr.setPriority(9);
+            thr.start();
             name++;
           //  count++;
         }
@@ -96,17 +101,7 @@ public class Main {
 
     }
     public static void checkSize(){
-       // File file = new File(path);
-      //  dataSize = file.length()/CONVERT;
-     //   System.out.println("\t\tData Size is: " + dataSize);
         if(dataSize > LIMIT) {
-            /*
-            for(Thread t: Thread.getAllStackTraces().keySet()){
-                if(t.getState() == Thread.State.RUNNABLE)
-                    t.interrupt();
-                //t.stop();
-            }
-            */
             System.exit(0);
         }
     }
