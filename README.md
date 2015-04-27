@@ -24,5 +24,12 @@ question:
 
 2:  indexing title or text?
 
+Information of Project:
+---
+1: crawling www.ucr.edu consuming time: 7.04 hour. downloading data: 5.9 GB.
 
+       so many interrupting when crawling and threads repeatly die due to invalid website 
+       or killed by client server. 
+   
+2: indexing time: 947 seconds. index size: 3.91 GB.
 
