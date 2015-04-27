@@ -31,10 +31,14 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 public class Lucene {
-  private static String doc_title;
-  private static String doc_id;
-  private static String pathdir = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
-  private static Path path = FileSystems.getDefault().getPath("C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\indexs\\");
+
+  private static long docSize = 0;
+  private static long docSize_init = 10000;
+  private static String pathdir = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
+  private static Path path = FileSystems.getDefault().getPath("C:\\Users\\Jin\\IdeaProjects\\searchEngine\\index\\");
+  private static String time_count_file = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\counter.txt";
+  private static StopWatch counter = new StopWatch();
+
 
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.
@@ -42,21 +46,18 @@ public class Lucene {
     EnglishAnalyzer analyzer = new EnglishAnalyzer();
 
     // 1. create the index
-    Directory index = new RAMDirectory();
+    Directory index = new MMapDirectory(path);
 
      //new MMapDirectory(path);
 
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
     IndexWriter w = new IndexWriter(index, config);
-    // adding documents
 
-    fileInput(w);
-    /*
-    while()
-    addDoc(w, "Managing Gigabytes", "55063554A");
-    addDoc(w, "The Art of Computer Science", "9900333X");
-    */
+    counter.start();
+    // adding documents
+      fileInput(w);
+
     w.close();
 
     // 2. query
@@ -76,7 +77,7 @@ public class Lucene {
     TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage);
     searcher.search(q, collector);
     ScoreDoc[] hits = collector.topDocs().scoreDocs;
-    
+   
     // 4. display results
     System.out.println("Found " + hits.length + " hits.");
     for(int i=0;i<hits.length;++i) {
@@ -107,29 +108,44 @@ public class Lucene {
     doc.add(new StringField("isbn", docID, Field.Store.YES));
     w.addDocument(doc);
   }
-  
- public static void scanner(String aFile,IndexWriter w, String docId)throws IOException{
+ 
+public static void scanner(String aFile,IndexWriter w, String docId)throws IOException{
     ReadFile r = new ReadFile();
     r.openFile(aFile);
-    r.readFile();
-    addDoc(w, r.getTitle(), docId, r.getText());
+    if(r.readFile())
+        addDoc(w, r.getTitle(), docId, r.getText());
     r.closeFile();
   }
-  
+ 
   public static void fileInput(IndexWriter w)throws IOException{
       File dir = new File(pathdir);
-	  File[] directoryListing = dir.listFiles();
+       File[] directoryListing = dir.listFiles();
 
-	  if (directoryListing != null) {
+       if (directoryListing != null) {
+          //create time counting file.
+          File f = new File(time_count_file);
+          f.createNewFile();
+          PrintWriter writer = new PrintWriter(time_count_file);
         for (File child : directoryListing) {
          // Do something with child
-          String docPath = child.getPath();
+            String docPath = child.getPath();
           String docId = child.getName();
+          docSize++;
           scanner(docPath, w, docId);
+          if(docSize == docSize_init){
+              writer.println("number of documents: "+ docSize +
+                      "   elapse time = "+counter.getElapsedTimeSecs());
+              System.out.println("number of documents: "+ docSize +
+                      "   elapse time = "+counter.getElapsedTimeSecs());
+              docSize_init += 10000;
+          }
+
+
 
           //System.out.println(child.getPath());
-	    }
-	  } else {
+         }
+          writer.close();
+       } else {
         System.err.println("not a directory");
       }
   }

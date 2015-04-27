@@ -10,26 +10,28 @@ import java.io.*;
 import java.util.*;
 
 import static com.company.Main.create_file;
+import static com.company.Main.setRecentURL;
+import static java.lang.Thread.*;
 
 /**
  * Created by Jin on 4/9/2015.
  */
 public class MyThreads implements Runnable{
     //private Thread t;
-	private static String path = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
+	private static String path = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
-    private static Queue<String> q = new LinkedList<>();
+    private static Vector<String> q = new Vector<String>();
+    private static double CONVERTER = 1073741824;
 
  //   private static String docNum;
-    private static int name;
-    private String hostUrl;
+    private static String hostUrl;
  //   private String text;
  //   private String title;
 
-    public MyThreads(String url, int name){
+    public MyThreads(String url){
        // this.docNum = docNum;
         this.hostUrl = url;
-        this.name = name;
+
     //    this.title = title;
     }
 
@@ -39,28 +41,35 @@ public class MyThreads implements Runnable{
         try {
                 passUrl(hostUrl);
             } catch (IOException e) {
-                System.out.println("Thread " + Thread.currentThread().getName() + "interrupted");
+                System.out.println(currentThread().getName() + "interrupted");
             }
-        int count = 0;
+
 //        PrintWriter writer = new PrintWriter(fileName);
    //     double dataTotal = Main.getDataSize();
-        while(!q.isEmpty() ) {
-            String url = q.remove();
+        int count = 0;
+        while(!q.isEmpty() && count < q.size()) {;
+            String url = q.elementAt(count);
             //     System.out.println(count);
-            Main.checkSize();
+
             try {
+                Main.setRecentURL(url);
+                Main.checkSize();
                 passUrl(url);
             } catch (IOException e) {
-                System.out.println("Thread " + Thread.currentThread().getName() + "interruped");
+                System.out.println( "interruped");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            count++;
         }
+        System.out.println("using time = " + Main.timer.getElapsedTimeSecs());
     }
 	 public static void create_file(String doc)throws IOException{
         File f = new File(doc);
         f.createNewFile();
     }
 	public static void passUrl(String url)throws IOException{
-        Vector<String> v = new Vector<String>();
+        //Vector<String> v = new Vector<String>();
 
         Document doc = Jsoup.connect(url).get();
         Elements links = doc.select("a[href]");
@@ -69,7 +78,7 @@ public class MyThreads implements Runnable{
         String title = doc.title();
         long docNumber = Main.getDocNum();
 
-        System.out.println("Thread " + Thread.currentThread().getName() + ", " + docNumber);
+        System.out.println(currentThread().getName() + ", " + docNumber);
 
         String file = path + Long.toString(docNumber) + ".txt";
 
@@ -80,13 +89,13 @@ public class MyThreads implements Runnable{
         writer.close();
 
         File thisFile = new File(file);
-        Main.addData(thisFile.length());
+        Main.addData(thisFile.length()/CONVERTER);
 
         for(Element link : links){
             String url_inQueue = link.attr("abs:href");
             if(!Main.getDuplicateUrlChecker().containsKey(url_inQueue)) {
                 Main.getDuplicateUrlChecker().put(url_inQueue,"OK");
-                q.add(url_inQueue);
+                q.addElement(url_inQueue);
             }
         }
     }

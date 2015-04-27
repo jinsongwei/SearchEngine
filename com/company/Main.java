@@ -12,19 +12,25 @@ import java.util.*;
  * Example program to list links from a URL.
  */
 public class Main {
-    private static String path = "C:\\Users\\Jin\\IdeaProjects\\WebCrawler\\document\\";
-    private static  long docNum = 1;
+    private static String path = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
+    private static String path_record = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\record.txt";
+    private static long docNum = 465379;
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
-	private static final double CONVERT = 1024*1024;
-    private static final long LIMIT = 50*1024*1024;
+	private static final double CONVERT = 1024*1024*1024;
+    private static final double LIMIT = 1;
     private static int stop = 0;
-    private static long dataSize = 0;
+    private static String recentURL;
+    private static double dataSize = 0;
 
-    public static long getDataSize(){
+    private static String host = "http://www.berkeley.edu";
+    //private static String host = "http://en.wikipedia.org/wiki/Main_Page";
+    public static StopWatch timer = new StopWatch();
+    public static double getDataSize(){
         return dataSize;
     }
+    public static void setRecentURL(String url){recentURL = url;}
 
-    public static void addData(long data){
+    public static void addData(double data){
         dataSize += data;
     }
     public static void setDocNum(int docNumber){
@@ -42,13 +48,15 @@ public class Main {
 
     //----------------->>>>>>>>>>>   main  <<<<<<<<<<<---------------------------
     public static void main(String[] args) throws IOException, InterruptedException {
-       webCrawlerDemo();
+        timer.start();
+       webCrawlerDemo(host);
 
     }
-    public static void webCrawlerDemo() throws IOException, InterruptedException {
-        String fileName = path + "0.txt";
-        //String hostUrl = "http://en.wikipedia.org";
-        String hostUrl = "http://www.ucr.edu";
+    public static void webCrawlerDemo(String hUrl) throws IOException, InterruptedException {
+        String fileName = path + Long.toString(docNum) + ".txt";
+        String hostUrl = hUrl;
+        //String hostUrl = "http://en.wikipedia.org/wiki/Main_Page";
+
 
         create_file(fileName);
        // start("http://www.ucr.edu",fileName);
@@ -80,19 +88,40 @@ public class Main {
         Thread main_thread = Thread.currentThread();
         main_thread.setPriority(10);
 
-        int name = 0;
-        int count = 0;
         while(!q.isEmpty()){
             String url = q.remove();
-            MyThreads t = new MyThreads(url,name);
+            MyThreads t = new MyThreads(url);
             Thread thr = new Thread(t);
             thr.setPriority(9);
             thr.start();
-            name++;
         }
     }
-    public static void checkSize(){
+    public static void checkSize() throws IOException, InterruptedException {
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path_record, true)))) {
+			out.println(recentURL);
+            out.close();
+		}catch (IOException e) {
+		//exception handling left as an exercise for the reader
+		}
+
+
+        /*
+        PrintWriter writer = new PrintWriter(path_record);
+        writer.println(recentURL);
+        writer.close();
+        */
+        int numOfTHreads = Thread.activeCount();
+        if(numOfTHreads < 150) {
+            System.out.println("number of running threads:  ---> " + numOfTHreads);
+            webCrawlerDemo(recentURL);
+            if(numOfTHreads < 10){
+                //duplicateUrlChecker.elements();
+            }
+        }
+       // System.out.println("data size is " + dataSize + "   limit size = " + LIMIT);
         if(dataSize > LIMIT) {
+            System.out.println("data Size is : " + dataSize + "  limit " + LIMIT);
+            System.out.println("using time: " + timer.getElapsedTimeSecs());
             System.exit(0);
         }
     }

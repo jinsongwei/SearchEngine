@@ -22,13 +22,18 @@ public class ReadFile {
     }
   }
 
-  public void readFile(){
+  public boolean readFile(){
       //System.out.println(x.nextLine());
-      title = x.nextLine();
+      if(x.hasNext())
+          title = x.nextLine();
+      else
+        return false;
+
     while(x.hasNext()){
       text += x.nextLine();
       text += "\n";
     }
+      return true;
   }
 
   public void closeFile(){
