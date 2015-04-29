@@ -14,15 +14,15 @@ import java.util.*;
 public class Main {
     private static String path = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
     private static String path_record = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\record.txt";
-    private static long docNum = 465379;
+    private static long docNum = 1;
 	private static Hashtable<String, String> duplicateUrlChecker = new Hashtable<String, String> ();
 	private static final double CONVERT = 1024*1024*1024;
-    private static final double LIMIT = 1;
+    private static final double LIMIT = 5;
     private static int stop = 0;
     private static String recentURL;
     private static double dataSize = 0;
 
-    private static String host = "http://www.berkeley.edu";
+    private static String host = "http://www.ucr.edu";
     //private static String host = "http://en.wikipedia.org/wiki/Main_Page";
     public static StopWatch timer = new StopWatch();
     public static double getDataSize(){
