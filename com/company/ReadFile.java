@@ -31,7 +31,7 @@ public class ReadFile {
 
     while(x.hasNext()){
       text += x.nextLine();
-      text += "\n";
+     // text += "\n";
     }
       return true;
   }
