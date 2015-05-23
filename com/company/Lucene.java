@@ -34,7 +34,7 @@ public class Lucene {
 
   private static long docSize = 0;
   private static long docSize_init = 10000;
-  private static String pathdir = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
+  private static String pathdir = "E:\\IdeaProjects\\WebCrawler\\documents\\";
   private static Path path = FileSystems.getDefault().getPath("C:\\Users\\Jin\\IdeaProjects\\searchEngine\\index\\");
   private static String time_count_file = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\counter.txt";
   private static StopWatch counter = new StopWatch();

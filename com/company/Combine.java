@@ -14,14 +14,11 @@ import java.util.concurrent.Exchanger;
 public class Combine {
     private static String prefix = "doc";
     private static String postfix = ".txt";
-    private static int docid = 0;
+    private static int docId = 0;
     private static int id = 0;
-    private static String pathdir = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\documents\\";
-    private static String pathCombine = "C:\\Users\\Jin\\IdeaProjects\\searchEngine\\combineDoc\\";
+    private static String pathdir = "E:\\IdeaProjects\\WebCrawler\\documents\\";
+    private static String pathCombine = "E:\\IdeaProjects\\WebCrawler\\combines\\";
 
-    private static String text = "";
-    private static String title = "";
-    private static String everything = "";
     public static void main(String[] args) throws IOException{
         insertDocs();
     }
@@ -38,45 +35,9 @@ public class Combine {
 
             String name = child.getName();
             String docPath = child.getPath();
-/*
-            try(BufferedReader br = new BufferedReader(new FileReader(docPath))) {
-                StringBuilder sb = new StringBuilder();
-                String title = br.readLine();
-                String text = br.readLine();
-                }
-                */
-            /*
-            BufferedReader br = new BufferedReader(new FileReader(docPath));
-            try {
-                StringBuilder sb = new StringBuilder();
-                String line = br.readLine();
-                while (line != null) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                    line = br.readLine();
-                }
-                String everything = sb.toString();
-                StringTokenizer st = new StringTokenizer(everything,"\n");
-                while(st.hasMoreTokens()){
-                    title = st.nextToken();
-                    text = st.nextToken();
-                }
+            String title="";
+            String text = "";
 
-                //System.out.println(everything);
-            } finally {
-                br.close();
-            }
-            */
-            /*
-            ReadFile r = new ReadFile();
-            r.openFile(docPath);
-            String text = r.getText();
-            String title = r.getTitle();
-            */
-
-
-            //if (count == 0)
-            //    break;
             try {
                 Scanner x = new Scanner(new File(docPath));
                 if(x.hasNext())
@@ -86,77 +47,63 @@ public class Combine {
             }catch(Exception e){}
 
 
-            if(count >= threshold){
-                String file = pathCombine + Integer.toString(docid) + postfix;
+            if(threshold == 0 || docId % threshold == 0 ){
+                String file = pathCombine + Integer.toString(count) + postfix;
                 File f = new File(file);
                 f.createNewFile();
 
-       //         PrintWriter writer = new PrintWriter(file);
-       //         writer.println(name + "\t" + title + "\t" + text + "\r\n");
-        //        writer.close();
-
                 try
                 {
-                    FileWriter fileWriter = new FileWriter(file);
+                    FileWriter fileWriter = new FileWriter(file,true);
                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-                    bufferedWriter.write(name + "\t" + title + "\t" + text );
-                    bufferedWriter.newLine();
-                    bufferedWriter.newLine();
-                    bufferedWriter.newLine();
-                    // Always close files.
-                    bufferedWriter.close();
-
-                }
-                catch(IOException ex) {
-                    System.out.println("Error writing to file '"+ file + "'");}
-
-            //    File afile = new File(file);
-           //     FileWriter fileWriter = new FileWriter(afile, true);
-            //    fileWriter.write(name + "\t" + title + "\t" + text + "\r\n");
-           //     fileWriter.close();
-
-                threshold += 10;
-                docid++;
-            }
-            else if(count < threshold){
-                String file = pathCombine + Integer.toString(docid) + postfix;
-             //   PrintWriter writer = new PrintWriter(file);
-             //   writer.append(name + "\t" + title + "\t"+ text + "" );
-             //   writer.append(System.lineSeparator());
-
-           //     FileWriter writer = new FileWriter(file, true);
-            //    writer.write(name + "\t" + title + "\t"+ text + "\r\n");
-                try
-                {
-                    FileWriter fileWriter = new FileWriter(file);
-                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-                    bufferedWriter.write(name + "\t" + title + "\t" + text );
-                    bufferedWriter.newLine();
-                    bufferedWriter.newLine();
-                    bufferedWriter.newLine();
+            
+                    bufferedWriter.write(name);
+                    bufferedWriter.write("##########");
+                    bufferedWriter.write(title);
+                    bufferedWriter.write("##########");
+                    bufferedWriter.write(text);
+                    String nl = System.getProperty("line.separator");
+                    bufferedWriter.write(nl);
 
                     // Always close files.
                     bufferedWriter.close();
 
                 }
                 catch(IOException ex) {
-                    System.out.println("Error writing to file '"+ file + "'");}
-                /*
-                File afile = new File(file);
-                FileWriter fileWriter = new FileWriter(afile, true);
-                fileWriter.write(name + "\t" + title + "\t" + text + "\r\n");
-                fileWriter.close();
-                */
-            //    writer.close();
+                    System.out.println("Error writing to file '"+ file + "'");
+                }
+
+                threshold += 1000;
+                count++;
             }
+            else {
+                String file = pathCombine + Integer.toString(count) + postfix;
 
-            count++;
+                try
+                {
+                    FileWriter fileWriter = new FileWriter(file,true);
+                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
+
+                    bufferedWriter.write(name);
+                    bufferedWriter.write("##########");
+                    bufferedWriter.write(title);
+                    bufferedWriter.write("##########");
+                    bufferedWriter.write(text);
+                    String nl = System.getProperty("line.separator");
+                    bufferedWriter.write(nl);
+
+                    // Always close files.
+                    bufferedWriter.close();
+
+                }
+                catch(IOException ex) {
+                    System.out.println("Error writing to file '"+ file + "'");
+                }
+            }
+            docId++;
         }
-
-
     }
 
 
