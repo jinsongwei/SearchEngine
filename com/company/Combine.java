@@ -57,7 +57,7 @@ public class Combine {
                     FileWriter fileWriter = new FileWriter(file,true);
                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-            
+
                     bufferedWriter.write(name);
                     bufferedWriter.write("##########");
                     bufferedWriter.write(title);
